@@ -1,9 +1,5 @@
 import java.util.Random;
 
-/**
- * Game Backend - Pure game logic without any UI code
- * AP Computer Science A concepts: classes, arrays, methods, loops, conditionals
- */
 public class GameBackend {
     
     // Character data
