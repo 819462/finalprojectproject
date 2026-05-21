@@ -2,10 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
-/**
- * Game Frontend - Simple GUI using Java Swing
- * AP Computer Science A concepts: GUI basics, event handling
- */
+
 public class GameFrontend extends JFrame {
     
     // Game backend
