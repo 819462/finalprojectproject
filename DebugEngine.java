@@ -1,7 +1,3 @@
-/**
- * Debug Engine - Helper methods for debugging and logging
- * AP Computer Science A concepts: static methods, console output
- */
 public class DebugEngine {
     
     private static boolean debugMode = true;
