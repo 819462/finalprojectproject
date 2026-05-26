@@ -100,7 +100,7 @@ public class GameBackend
         
         if (items[itemIndex].equals("Boots")) 
         {
-            playerTeam[playerIndex].speed += 2;
+            playerTeam[playerIndex].speed = playerTeam[playerIndex].speed + 2;
         }
     }
     
@@ -191,18 +191,18 @@ public class GameBackend
         
         if (target.shieldActive) 
         {
-            battleLog += target.name + " blocked with shield!\n";
+            battleLog = battleLog + target.name + " blocked with shield!\n";
             target.shieldActive = false;
             return;
         }
         
-        target.currentHp -= damage;
-        battleLog += attacker.name + " attacks " + target.name + " for " + damage + " damage!\n";
+        target.currentHp = target.currentHp - damage;
+        battleLog = battleLog + attacker.name + " attacks " + target.name + " for " + damage + " damage!\n";
         
         if (attacker.name.contains("Witch")) 
         {
             target.poisonTurns = 3;
-            battleLog += target.name + " is poisoned!\n";
+            battleLog = battleLog + target.name + " is poisoned!\n";
         }
         
         checkDeath(target);
@@ -210,12 +210,12 @@ public class GameBackend
     
     private void useUltimate(Character user, Character[] allies, Character[] enemies) 
     {
-        battleLog += user.name + " uses " + user.ultName + "!\n";
+        battleLog = battleLog + user.name + " uses " + user.ultName + "!\n";
         
         if (user.name.contains("Knight")) 
         {
             user.shieldActive = true;
-            battleLog += user.name + " raises shield!\n";
+            battleLog = battleLog + user.name + " raises shield!\n";
             
         } 
         else if (user.name.contains("Robot")) 
@@ -225,11 +225,11 @@ public class GameBackend
             {
                 if (enemies[i].isAlive) 
                 {
-                    enemies[i].currentHp -= 50;
-                    battleLog += "Rocket hits " + enemies[i].name + " for 50 damage!\n";
+                    enemies[i].currentHp = enemies[i].currentHp - 50;
+                    battleLog = battleLog + "Rocket hits " + enemies[i].name + " for 50 damage!\n";
                     checkDeath(enemies[i]);
                 }
-                i++;
+                i = i + 1;
             }
             
         } 
@@ -243,11 +243,11 @@ public class GameBackend
                 {
                     allies[i].currentHp = 50;
                     allies[i].isAlive = true;
-                    battleLog += allies[i].name + " revived with 50 HP!\n";
+                    battleLog = battleLog + allies[i].name + " revived with 50 HP!\n";
                     revived = true;
                     break;
                 }
-                i++;
+                i = i + 1;
             }
             
             if (!revived) 
@@ -257,15 +257,15 @@ public class GameBackend
                 {
                     if (allies[j].isAlive && allies[j] != user) 
                     {
-                        allies[j].currentHp += 20;
+                        allies[j].currentHp = allies[j].currentHp + 20;
                         if (allies[j].currentHp > allies[j].maxHp) 
                         {
                             allies[j].currentHp = allies[j].maxHp;
                         }
-                        battleLog += allies[j].name + " healed for 20 HP!\n";
+                        battleLog = battleLog + allies[j].name + " healed for 20 HP!\n";
                         return;
                     }
-                    j++;
+                    j = j + 1;
                 }
             }
         }
@@ -273,30 +273,30 @@ public class GameBackend
     
     private void useItem(Character user) 
     {
-        battleLog += user.name + " uses " + user.item + "!\n";
+        battleLog = battleLog + user.name + " uses " + user.item + "!\n";
         
         if (user.item.equals("Potion")) 
         {
-            user.currentHp += 40;
+            user.currentHp = user.currentHp + 40;
             if (user.currentHp > user.maxHp) 
             {
                 user.currentHp = user.maxHp;
             }
-            battleLog += user.name + " heals 40 HP!\n";
+            battleLog = battleLog + user.name + " heals 40 HP!\n";
             user.item = "";
             
         } 
         else if (user.item.equals("Shield")) 
         {
             user.shieldActive = true;
-            battleLog += user.name + " raises shield!\n";
+            battleLog = battleLog + user.name + " raises shield!\n";
             user.item = "";
             
         } 
         else if (user.item.equals("Knife")) 
         {
             user.knifeBoostTurns = 2;
-            battleLog += user.name + " gets +50% damage for 2 turns!\n";
+            battleLog = battleLog + user.name + " gets +50% damage for 2 turns!\n";
             user.item = "";
         }
     }
@@ -308,7 +308,7 @@ public class GameBackend
         {
             if (!enemyTeam[i].isAlive) 
             {
-                i++;
+                i = i + 1;
                 continue;
             }
             
@@ -338,7 +338,7 @@ public class GameBackend
                     performAttack(enemyTeam[i], target);
                 }
             }
-            i++;
+            i = i + 1;
         }
     }
     
@@ -349,12 +349,12 @@ public class GameBackend
         {
             if (playerTeam[i].poisonTurns > 0) 
             {
-                playerTeam[i].currentHp -= 10;
-                battleLog += playerTeam[i].name + " takes 10 poison damage!\n";
-                playerTeam[i].poisonTurns--;
+                playerTeam[i].currentHp = playerTeam[i].currentHp - 10;
+                battleLog = battleLog + playerTeam[i].name + " takes 10 poison damage!\n";
+                playerTeam[i].poisonTurns = playerTeam[i].poisonTurns - 1;
                 checkDeath(playerTeam[i]);
             }
-            i++;
+            i = i + 1;
         }
         
         int j = 0;
@@ -362,12 +362,12 @@ public class GameBackend
         {
             if (enemyTeam[j].poisonTurns > 0) 
             {
-                enemyTeam[j].currentHp -= 10;
-                battleLog += enemyTeam[j].name + " takes 10 poison damage!\n";
-                enemyTeam[j].poisonTurns--;
+                enemyTeam[j].currentHp = enemyTeam[j].currentHp - 10;
+                battleLog = battleLog + enemyTeam[j].name + " takes 10 poison damage!\n";
+                enemyTeam[j].poisonTurns = enemyTeam[j].poisonTurns - 1;
                 checkDeath(enemyTeam[j]);
             }
-            j++;
+            j = j + 1;
         }
         
         int k = 0;
@@ -375,9 +375,9 @@ public class GameBackend
         {
             if (playerTeam[k].knifeBoostTurns > 0) 
             {
-                playerTeam[k].knifeBoostTurns--;
+                playerTeam[k].knifeBoostTurns = playerTeam[k].knifeBoostTurns - 1;
             }
-            k++;
+            k = k + 1;
         }
         
         int m = 0;
@@ -385,9 +385,9 @@ public class GameBackend
         {
             if (enemyTeam[m].knifeBoostTurns > 0) 
             {
-                enemyTeam[m].knifeBoostTurns--;
+                enemyTeam[m].knifeBoostTurns = enemyTeam[m].knifeBoostTurns - 1;
             }
-            m++;
+            m = m + 1;
         }
         
         int n = 0;
@@ -395,9 +395,9 @@ public class GameBackend
         {
             if (playerTeam[n].isAlive && playerTeam[n].ultCharge < playerTeam[n].ultMax) 
             {
-                playerTeam[n].ultCharge++;
+                playerTeam[n].ultCharge = playerTeam[n].ultCharge + 1;
             }
-            n++;
+            n = n + 1;
         }
         
         int p = 0;
@@ -405,9 +405,9 @@ public class GameBackend
         {
             if (enemyTeam[p].isAlive && enemyTeam[p].ultCharge < enemyTeam[p].ultMax) 
             {
-                enemyTeam[p].ultCharge++;
+                enemyTeam[p].ultCharge = enemyTeam[p].ultCharge + 1;
             }
-            p++;
+            p = p + 1;
         }
         
         checkGameOver();
@@ -419,7 +419,7 @@ public class GameBackend
         {
             c.currentHp = 0;
             c.isAlive = false;
-            battleLog += c.name + " has been defeated!\n";
+            battleLog = battleLog + c.name + " has been defeated!\n";
         }
     }
     
@@ -432,13 +432,13 @@ public class GameBackend
         {
             gameOver = true;
             playerWon = false;
-            battleLog += "\n*** GAME OVER - You Lost! ***\n";
+            battleLog = battleLog + "\n*** GAME OVER - You Lost! ***\n";
         } 
         else if (!enemyAlive) 
         {
             gameOver = true;
             playerWon = true;
-            battleLog += "\n*** VICTORY - You Won! ***\n";
+            battleLog = battleLog + "\n*** VICTORY - You Won! ***\n";
         }
     }
 }
