@@ -1,98 +1,112 @@
 public class GameBackend 
 {
-    public static class Character 
-    {
-        public String name;
-        public int maxHp;
-        public int currentHp;
-        public int speed;
-        public int attack;
-        public int ultCharge;
-        public int ultMax;
-        public String ultName;
-        public String item;
-        public boolean isAlive;
-        public boolean shieldActive;
-        public int knifeBoostTurns;
-        public int poisonTurns;
-        
-        public Character(String name, int hp, int speed, int attack, int ultMax, String ultName) 
-        {
-            this.name = name;
-            this.maxHp = hp;
-            this.currentHp = hp;
-            this.speed = speed;
-            this.attack = attack;
-            this.ultMax = ultMax;
-            this.ultName = ultName;
-            this.ultCharge = 0;
-            this.isAlive = true;
-            this.shieldActive = false;
-            this.knifeBoostTurns = 0;
-            this.poisonTurns = 0;
-            this.item = "";
-        }
-    }
-    
-    private Character[] myTeam;
+    private Character[] playerTeam;
     private Character[] enemyTeam;
-    private String log;
-    private boolean done;
-    private boolean won;
-    private int turnCount;
+    private String battleLog;
+    private boolean gameOver;
+    private boolean playerWon;
     
     public GameBackend() 
     {
-        log = "";
-        done = false;
-        won = false;
-        turnCount = 0;
+        battleLog = "";
+        gameOver = false;
+        playerWon = false;
     }
     
     public void createTeams(int char1Index, int char2Index) 
     {
-        Character[] options = 
-        {
-            new Character("Knight", 250, 2, 30, 2, "Counter"),
-            new Character("Robot", 300, 1, 35, 3, "Rocket"),
-            new Character("Witch", 200, 3, 20, 5, "Revive")
-        };
+        Character knight = new Character("Knight", 250, 2, 30, 2, "Counter");
+        Character robot = new Character("Robot", 300, 1, 35, 3, "Rocket");
+        Character witch = new Character("Witch", 200, 3, 20, 5, "Revive");
         
-        myTeam = new Character[2];
-        myTeam[0] = cloneChar(options[char1Index]);
-        myTeam[0].name = "O's " + myTeam[0].name;
-        myTeam[1] = cloneChar(options[char2Index]);
-        myTeam[1].name = "O's " + myTeam[1].name;
+        playerTeam = new Character[2];
+        
+        if (char1Index == 0)
+        {
+            playerTeam[0] = copyCharacter(knight);
+        }
+        else if (char1Index == 1)
+        {
+            playerTeam[0] = copyCharacter(robot);
+        }
+        else
+        {
+            playerTeam[0] = copyCharacter(witch);
+        }
+        playerTeam[0].name = "O's " + playerTeam[0].name;
+        
+        if (char2Index == 0)
+        {
+            playerTeam[1] = copyCharacter(knight);
+        }
+        else if (char2Index == 1)
+        {
+            playerTeam[1] = copyCharacter(robot);
+        }
+        else
+        {
+            playerTeam[1] = copyCharacter(witch);
+        }
+        playerTeam[1].name = "O's " + playerTeam[1].name;
         
         enemyTeam = new Character[2];
-        int e1 = (int)(Math.random() * 3);
-        int e2 = (int)(Math.random() * 3);
-        while (e2 == e1) e2 = (int)(Math.random() * 3);
-        enemyTeam[0] = cloneChar(options[e1]);
+        
+        int firstEnemyChoice = (int)(Math.random() * 3);
+        int secondEnemyChoice = (int)(Math.random() * 3);
+        
+        while (secondEnemyChoice == firstEnemyChoice)
+        {
+            secondEnemyChoice = (int)(Math.random() * 3);
+        }
+        
+        if (firstEnemyChoice == 0)
+        {
+            enemyTeam[0] = copyCharacter(knight);
+        }
+        else if (firstEnemyChoice == 1)
+        {
+            enemyTeam[0] = copyCharacter(robot);
+        }
+        else
+        {
+            enemyTeam[0] = copyCharacter(witch);
+        }
         enemyTeam[0].name = "X's " + enemyTeam[0].name;
-        enemyTeam[1] = cloneChar(options[e2]);
+        
+        if (secondEnemyChoice == 0)
+        {
+            enemyTeam[1] = copyCharacter(knight);
+        }
+        else if (secondEnemyChoice == 1)
+        {
+            enemyTeam[1] = copyCharacter(robot);
+        }
+        else
+        {
+            enemyTeam[1] = copyCharacter(witch);
+        }
         enemyTeam[1].name = "X's " + enemyTeam[1].name;
     }
     
-    private Character cloneChar(Character c) 
+    private Character copyCharacter(Character c) 
     {
         return new Character(c.name, c.maxHp, c.speed, c.attack, c.ultMax, c.ultName);
     }
     
     public void equipItem(int playerIndex, int itemIndex) 
     {
-        String[] stuff = {"Shield", "Potion", "Knife", "Boots", "Blow Dart"};
-        myTeam[playerIndex].item = stuff[itemIndex];
+        String[] items = {"Shield", "Potion", "Knife", "Boots", "Blow Dart"};
+        playerTeam[playerIndex].item = items[itemIndex];
         
-        if (stuff[itemIndex].equals("Boots")) 
+        if (items[itemIndex].equals("Boots")) 
         {
-            myTeam[playerIndex].speed += 2;
+            playerTeam[playerIndex].speed += 2;
         }
     }
     
     public Character[] getPlayerTeam() 
     { 
-        return myTeam; 
+        return playerTeam; 
     }
     
     public Character[] getEnemyTeam() 
@@ -102,316 +116,329 @@ public class GameBackend
     
     public String getBattleLog() 
     { 
-        return log; 
+        return battleLog; 
     }
     
     public boolean isGameOver() 
     { 
-        return done; 
+        return gameOver; 
     }
     
     public boolean didPlayerWin() 
     { 
-        return won; 
+        return playerWon; 
     }
     
     public void playerAttack(int playerIndex, int enemyIndex) 
     {
-        log = "";
-        Character attacker = myTeam[playerIndex];
+        battleLog = "";
+        Character attacker = playerTeam[playerIndex];
         Character target = enemyTeam[enemyIndex];
         
         if (!attacker.isAlive || !target.isAlive) 
         {
-            log = "Invalid target!";
+            battleLog = "Invalid target!";
             return;
         }
         
-        doAttack(attacker, target);
-        turnCount++;
-        
-        checkWinner();
-        if (done) return;
-        
-        if (turnCount >= 2) 
-        {
-            enemyTeamTurn();
-            checkWinner();
-            if (done) return;
-            processTurn();
-            turnCount = 0;
-        }
+        performAttack(attacker, target);
+        enemyTurn();
+        endTurn();
     }
     
     public void playerUltimate(int playerIndex) 
     {
-        log = "";
-        Character user = myTeam[playerIndex];
+        battleLog = "";
+        Character user = playerTeam[playerIndex];
         
         if (!user.isAlive || user.ultCharge < user.ultMax) 
         {
-            log = "Cannot use ultimate!";
+            battleLog = "Cannot use ultimate!";
             return;
         }
         
-        doUltimate(user, myTeam, enemyTeam);
+        useUltimate(user, playerTeam, enemyTeam);
         user.ultCharge = 0;
-        turnCount++;
         
-        checkWinner();
-        if (done) 
-            return;
-        
-        if (turnCount >= 2) 
-        {
-            enemyTeamTurn();
-            checkWinner();
-            if (done) return;
-            processTurn();
-            turnCount = 0;
-        }
+        enemyTurn();
+        endTurn();
     }
     
     public void playerUseItem(int playerIndex) 
     {
-        log = "";
-        Character user = myTeam[playerIndex];
+        battleLog = "";
+        Character user = playerTeam[playerIndex];
         
         if (!user.isAlive || user.item.equals("")) 
         {
-            log = "No item to use!";
+            battleLog = "No item to use!";
             return;
         }
         
-        activateItem(user);
-        turnCount++;
-        
-        checkWinner();
-        if (done) return;
-        
-        if (turnCount >= 2) 
-        {
-            enemyTeamTurn();
-            checkWinner();
-            if (done) return;
-            processTurn();
-            turnCount = 0;
-        }
+        useItem(user);
+        enemyTurn();
+        endTurn();
     }
     
-    private void doAttack(Character attacker, Character target) 
+    private void performAttack(Character attacker, Character target) 
     {
-        int dmg = attacker.attack;
+        int damage = attacker.attack;
         
         if (attacker.knifeBoostTurns > 0) 
         {
-            dmg = (int)(dmg * 1.5);
+            damage = (int)(damage * 1.5);
         }
         
         if (target.shieldActive) 
         {
-            log += target.name + " blocked with shield!\n";
+            battleLog += target.name + " blocked with shield!\n";
             target.shieldActive = false;
             return;
         }
         
-        target.currentHp -= dmg;
-        log += attacker.name + " attacks " + target.name + " for " + dmg + " damage!\n";
+        target.currentHp -= damage;
+        battleLog += attacker.name + " attacks " + target.name + " for " + damage + " damage!\n";
         
         if (attacker.name.contains("Witch")) 
         {
             target.poisonTurns = 3;
-            log += target.name + " is poisoned!\n";
+            battleLog += target.name + " is poisoned!\n";
         }
         
-        checkIfDead(target);
+        checkDeath(target);
     }
     
-    private void doUltimate(Character user, Character[] friends, Character[] enemies) 
+    private void useUltimate(Character user, Character[] allies, Character[] enemies) 
     {
-        log += user.name + " uses " + user.ultName + "!\n";
+        battleLog += user.name + " uses " + user.ultName + "!\n";
         
         if (user.name.contains("Knight")) 
         {
             user.shieldActive = true;
-            log += user.name + " raises shield!\n";
+            battleLog += user.name + " raises shield!\n";
             
         } 
         else if (user.name.contains("Robot")) 
         {
-            for (Character e : enemies) 
+            int i = 0;
+            while (i < enemies.length)
             {
-                if (e.isAlive) 
+                if (enemies[i].isAlive) 
                 {
-                    e.currentHp -= 50;
-                    log += "Rocket hits " + e.name + " for 50 damage!\n";
-                    checkIfDead(e);
+                    enemies[i].currentHp -= 50;
+                    battleLog += "Rocket hits " + enemies[i].name + " for 50 damage!\n";
+                    checkDeath(enemies[i]);
                 }
+                i++;
             }
             
         } 
         else if (user.name.contains("Witch")) 
         {
             boolean revived = false;
-            for (Character buddy : friends) 
+            int i = 0;
+            while (i < allies.length)
             {
-                if (!buddy.isAlive) 
+                if (!allies[i].isAlive) 
                 {
-                    buddy.currentHp = 50;
-                    buddy.isAlive = true;
-                    log += buddy.name + " revived with 50 HP!\n";
+                    allies[i].currentHp = 50;
+                    allies[i].isAlive = true;
+                    battleLog += allies[i].name + " revived with 50 HP!\n";
                     revived = true;
                     break;
                 }
+                i++;
             }
+            
             if (!revived) 
             {
-                for (Character buddy : friends) 
+                int j = 0;
+                while (j < allies.length)
                 {
-                    if (buddy.isAlive && buddy != user) 
+                    if (allies[j].isAlive && allies[j] != user) 
                     {
-                        buddy.currentHp += 20;
-                        if (buddy.currentHp > buddy.maxHp) buddy.currentHp = buddy.maxHp;
-                        log += buddy.name + " healed for 20 HP!\n";
+                        allies[j].currentHp += 20;
+                        if (allies[j].currentHp > allies[j].maxHp) 
+                        {
+                            allies[j].currentHp = allies[j].maxHp;
+                        }
+                        battleLog += allies[j].name + " healed for 20 HP!\n";
                         return;
                     }
+                    j++;
                 }
             }
         }
     }
     
-    private void activateItem(Character user) 
+    private void useItem(Character user) 
     {
-        log += user.name + " uses " + user.item + "!\n";
+        battleLog += user.name + " uses " + user.item + "!\n";
         
         if (user.item.equals("Potion")) 
         {
             user.currentHp += 40;
-            if (user.currentHp > user.maxHp) user.currentHp = user.maxHp;
-            log += user.name + " heals 40 HP!\n";
+            if (user.currentHp > user.maxHp) 
+            {
+                user.currentHp = user.maxHp;
+            }
+            battleLog += user.name + " heals 40 HP!\n";
             user.item = "";
             
         } 
         else if (user.item.equals("Shield")) 
         {
             user.shieldActive = true;
-            log += user.name + " raises shield!\n";
+            battleLog += user.name + " raises shield!\n";
             user.item = "";
             
         } 
         else if (user.item.equals("Knife")) 
         {
             user.knifeBoostTurns = 2;
-            log += user.name + " gets +50% damage for 2 turns!\n";
+            battleLog += user.name + " gets +50% damage for 2 turns!\n";
             user.item = "";
         }
     }
     
-    private void enemyTeamTurn() 
+    private void enemyTurn() 
     {
-        for (Character enemy : enemyTeam) 
+        int i = 0;
+        while (i < enemyTeam.length)
         {
-            if (!enemy.isAlive) continue;
+            if (!enemyTeam[i].isAlive) 
+            {
+                i++;
+                continue;
+            }
             
             Character target = null;
-            if (myTeam[0].isAlive && myTeam[1].isAlive) 
+            if (playerTeam[0].isAlive && playerTeam[1].isAlive) 
             {
-                target = myTeam[(int)(Math.random() * 2)];
+                target = playerTeam[(int)(Math.random() * 2)];
             } 
-            else if (myTeam[0].isAlive) 
+            else if (playerTeam[0].isAlive) 
             {
-                target = myTeam[0];
+                target = playerTeam[0];
             } 
-            else if (myTeam[1].isAlive) 
+            else if (playerTeam[1].isAlive) 
             {
-                target = myTeam[1];
+                target = playerTeam[1];
             }
             
             if (target != null) 
             {
-                if (enemy.ultCharge >= enemy.ultMax && (int)(Math.random() * 100) < 30) 
+                if (enemyTeam[i].ultCharge >= enemyTeam[i].ultMax && (int)(Math.random() * 100) < 30) 
                 {
-                    doUltimate(enemy, enemyTeam, myTeam);
-                    enemy.ultCharge = 0;
+                    useUltimate(enemyTeam[i], enemyTeam, playerTeam);
+                    enemyTeam[i].ultCharge = 0;
                 } 
                 else 
                 {
-                    doAttack(enemy, target);
+                    performAttack(enemyTeam[i], target);
                 }
             }
+            i++;
         }
     }
     
-    private void processTurn() 
+    private void endTurn() 
     {
-        for (Character c : myTeam) 
+        int i = 0;
+        while (i < playerTeam.length)
         {
-            if (c.poisonTurns > 0) 
+            if (playerTeam[i].poisonTurns > 0) 
             {
-                c.currentHp -= 10;
-                log += c.name + " takes 10 poison damage!\n";
-                c.poisonTurns--;
-                checkIfDead(c);
+                playerTeam[i].currentHp -= 10;
+                battleLog += playerTeam[i].name + " takes 10 poison damage!\n";
+                playerTeam[i].poisonTurns--;
+                checkDeath(playerTeam[i]);
             }
+            i++;
         }
-        for (Character c : enemyTeam) 
+        
+        int j = 0;
+        while (j < enemyTeam.length)
         {
-            if (c.poisonTurns > 0) 
+            if (enemyTeam[j].poisonTurns > 0) 
             {
-                c.currentHp -= 10;
-                log += c.name + " takes 10 poison damage!\n";
-                c.poisonTurns--;
-                checkIfDead(c);
+                enemyTeam[j].currentHp -= 10;
+                battleLog += enemyTeam[j].name + " takes 10 poison damage!\n";
+                enemyTeam[j].poisonTurns--;
+                checkDeath(enemyTeam[j]);
             }
+            j++;
         }
         
-        for (Character c : myTeam) 
+        int k = 0;
+        while (k < playerTeam.length)
         {
-            if (c.knifeBoostTurns > 0) c.knifeBoostTurns--;
-        }
-        for (Character c : enemyTeam) 
-        {
-            if (c.knifeBoostTurns > 0) c.knifeBoostTurns--;
-        }
-        
-        for (Character c : myTeam) 
-        {
-            if (c.isAlive && c.ultCharge < c.ultMax) c.ultCharge++;
-        }
-        for (Character c : enemyTeam) 
-        {
-            if (c.isAlive && c.ultCharge < c.ultMax) c.ultCharge++;
+            if (playerTeam[k].knifeBoostTurns > 0) 
+            {
+                playerTeam[k].knifeBoostTurns--;
+            }
+            k++;
         }
         
-        checkWinner();
+        int m = 0;
+        while (m < enemyTeam.length)
+        {
+            if (enemyTeam[m].knifeBoostTurns > 0) 
+            {
+                enemyTeam[m].knifeBoostTurns--;
+            }
+            m++;
+        }
+        
+        int n = 0;
+        while (n < playerTeam.length)
+        {
+            if (playerTeam[n].isAlive && playerTeam[n].ultCharge < playerTeam[n].ultMax) 
+            {
+                playerTeam[n].ultCharge++;
+            }
+            n++;
+        }
+        
+        int p = 0;
+        while (p < enemyTeam.length)
+        {
+            if (enemyTeam[p].isAlive && enemyTeam[p].ultCharge < enemyTeam[p].ultMax) 
+            {
+                enemyTeam[p].ultCharge++;
+            }
+            p++;
+        }
+        
+        checkGameOver();
     }
     
-    private void checkIfDead(Character c) 
+    private void checkDeath(Character c) 
     {
         if (c.currentHp <= 0) 
         {
             c.currentHp = 0;
             c.isAlive = false;
-            log += c.name + " has been defeated!\n";
+            battleLog += c.name + " has been defeated!\n";
         }
     }
     
-    private void checkWinner() 
+    private void checkGameOver() 
     {
-        boolean playerStillAlive = myTeam[0].isAlive || myTeam[1].isAlive;
-        boolean enemyStillAlive = enemyTeam[0].isAlive || enemyTeam[1].isAlive;
+        boolean playerAlive = playerTeam[0].isAlive || playerTeam[1].isAlive;
+        boolean enemyAlive = enemyTeam[0].isAlive || enemyTeam[1].isAlive;
         
-        if (!playerStillAlive) 
+        if (!playerAlive) 
         {
-            done = true;
-            won = false;
-            log += "\n*** GAME OVER - You Lost! ***\n";
+            gameOver = true;
+            playerWon = false;
+            battleLog += "\n*** GAME OVER - You Lost! ***\n";
         } 
-        else if (!enemyStillAlive) 
+        else if (!enemyAlive) 
         {
-            done = true;
-            won = true;
-            log += "\n*** VICTORY - You Won! ***\n";
+            gameOver = true;
+            playerWon = true;
+            battleLog += "\n*** VICTORY - You Won! ***\n";
         }
     }
 }
