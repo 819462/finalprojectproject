@@ -1,8 +1,5 @@
-import java.util.Random;
-
 public class GameBackend 
 {
-    
     public static class Character 
     {
         public String name;
@@ -38,20 +35,18 @@ public class GameBackend
     }
     
     private Character[] myTeam;
-    private Character[] badGuys;
-    private Random rng;
+    private Character[] enemyTeam;
     private String log;
     private boolean done;
     private boolean won;
-    private int turnCounter;
+    private int turnCount;
     
     public GameBackend() 
     {
-        rng = new Random();
         log = "";
         done = false;
         won = false;
-        turnCounter = 0;
+        turnCount = 0;
     }
     
     public void createTeams(int char1Index, int char2Index) 
@@ -69,14 +64,14 @@ public class GameBackend
         myTeam[1] = cloneChar(options[char2Index]);
         myTeam[1].name = "O's " + myTeam[1].name;
         
-        badGuys = new Character[2];
-        int e1 = rng.nextInt(3);
-        int e2 = rng.nextInt(3);
-        while (e2 == e1) e2 = rng.nextInt(3);
-        badGuys[0] = cloneChar(options[e1]);
-        badGuys[0].name = "X's " + badGuys[0].name;
-        badGuys[1] = cloneChar(options[e2]);
-        badGuys[1].name = "X's " + badGuys[1].name;
+        enemyTeam = new Character[2];
+        int e1 = (int)(Math.random() * 3);
+        int e2 = (int)(Math.random() * 3);
+        while (e2 == e1) e2 = (int)(Math.random() * 3);
+        enemyTeam[0] = cloneChar(options[e1]);
+        enemyTeam[0].name = "X's " + enemyTeam[0].name;
+        enemyTeam[1] = cloneChar(options[e2]);
+        enemyTeam[1].name = "X's " + enemyTeam[1].name;
     }
     
     private Character cloneChar(Character c) 
@@ -95,17 +90,36 @@ public class GameBackend
         }
     }
     
-    public Character[] getPlayerTeam() { return myTeam; }
-    public Character[] getEnemyTeam() { return badGuys; }
-    public String getBattleLog() { return log; }
-    public boolean isGameOver() { return done; }
-    public boolean didPlayerWin() { return won; }
+    public Character[] getPlayerTeam() 
+    { 
+        return myTeam; 
+    }
+    
+    public Character[] getEnemyTeam() 
+    { 
+        return enemyTeam; 
+    }
+    
+    public String getBattleLog() 
+    { 
+        return log; 
+    }
+    
+    public boolean isGameOver() 
+    { 
+        return done; 
+    }
+    
+    public boolean didPlayerWin() 
+    { 
+        return won; 
+    }
     
     public void playerAttack(int playerIndex, int enemyIndex) 
     {
         log = "";
         Character attacker = myTeam[playerIndex];
-        Character target = badGuys[enemyIndex];
+        Character target = enemyTeam[enemyIndex];
         
         if (!attacker.isAlive || !target.isAlive) 
         {
@@ -114,18 +128,18 @@ public class GameBackend
         }
         
         doAttack(attacker, target);
-        turnCounter++;
+        turnCount++;
         
         checkWinner();
         if (done) return;
         
-        if (turnCounter >= 2) 
+        if (turnCount >= 2) 
         {
-            badGuysTurn();
+            enemyTeamTurn();
             checkWinner();
             if (done) return;
             processTurn();
-            turnCounter = 0;
+            turnCount = 0;
         }
     }
     
@@ -140,20 +154,21 @@ public class GameBackend
             return;
         }
         
-        doUltimate(user, myTeam, badGuys);
+        doUltimate(user, myTeam, enemyTeam);
         user.ultCharge = 0;
-        turnCounter++;
+        turnCount++;
         
         checkWinner();
-        if (done) return;
+        if (done) 
+            return;
         
-        if (turnCounter >= 2) 
+        if (turnCount >= 2) 
         {
-            badGuysTurn();
+            enemyTeamTurn();
             checkWinner();
             if (done) return;
             processTurn();
-            turnCounter = 0;
+            turnCount = 0;
         }
     }
     
@@ -169,18 +184,18 @@ public class GameBackend
         }
         
         activateItem(user);
-        turnCounter++;
+        turnCount++;
         
         checkWinner();
         if (done) return;
         
-        if (turnCounter >= 2) 
+        if (turnCount >= 2) 
         {
-            badGuysTurn();
+            enemyTeamTurn();
             checkWinner();
             if (done) return;
             processTurn();
-            turnCounter = 0;
+            turnCount = 0;
         }
     }
     
@@ -292,16 +307,16 @@ public class GameBackend
         }
     }
     
-    private void badGuysTurn() 
+    private void enemyTeamTurn() 
     {
-        for (Character enemy : badGuys) 
+        for (Character enemy : enemyTeam) 
         {
             if (!enemy.isAlive) continue;
             
             Character target = null;
             if (myTeam[0].isAlive && myTeam[1].isAlive) 
             {
-                target = myTeam[rng.nextInt(2)];
+                target = myTeam[(int)(Math.random() * 2)];
             } 
             else if (myTeam[0].isAlive) 
             {
@@ -314,9 +329,9 @@ public class GameBackend
             
             if (target != null) 
             {
-                if (enemy.ultCharge >= enemy.ultMax && rng.nextInt(100) < 30) 
+                if (enemy.ultCharge >= enemy.ultMax && (int)(Math.random() * 100) < 30) 
                 {
-                    doUltimate(enemy, badGuys, myTeam);
+                    doUltimate(enemy, enemyTeam, myTeam);
                     enemy.ultCharge = 0;
                 } 
                 else 
@@ -339,7 +354,7 @@ public class GameBackend
                 checkIfDead(c);
             }
         }
-        for (Character c : badGuys) 
+        for (Character c : enemyTeam) 
         {
             if (c.poisonTurns > 0) 
             {
@@ -354,7 +369,7 @@ public class GameBackend
         {
             if (c.knifeBoostTurns > 0) c.knifeBoostTurns--;
         }
-        for (Character c : badGuys) 
+        for (Character c : enemyTeam) 
         {
             if (c.knifeBoostTurns > 0) c.knifeBoostTurns--;
         }
@@ -363,7 +378,7 @@ public class GameBackend
         {
             if (c.isAlive && c.ultCharge < c.ultMax) c.ultCharge++;
         }
-        for (Character c : badGuys) 
+        for (Character c : enemyTeam) 
         {
             if (c.isAlive && c.ultCharge < c.ultMax) c.ultCharge++;
         }
@@ -384,7 +399,7 @@ public class GameBackend
     private void checkWinner() 
     {
         boolean playerStillAlive = myTeam[0].isAlive || myTeam[1].isAlive;
-        boolean enemyStillAlive = badGuys[0].isAlive || badGuys[1].isAlive;
+        boolean enemyStillAlive = enemyTeam[0].isAlive || enemyTeam[1].isAlive;
         
         if (!playerStillAlive) 
         {
