@@ -428,13 +428,13 @@ public class GameBackend
         boolean playerAlive = playerTeam[0].isAlive || playerTeam[1].isAlive;
         boolean enemyAlive = enemyTeam[0].isAlive || enemyTeam[1].isAlive;
         
-        if !(playerAlive) 
+        if (!playerAlive) 
         {
             gameOver = true;
             playerWon = false;
             battleLog += "\n*** GAME OVER - You Lost! ***\n";
         } 
-        else if !(enemyAlive) 
+        else if (!enemyAlive) 
         {
             gameOver = true;
             playerWon = true;
