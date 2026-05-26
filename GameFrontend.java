@@ -3,30 +3,29 @@ import java.awt.*;
 import java.awt.event.*;
 
 
-public class GameFrontend extends JFrame {
+public class GameFrontend extends JFrame 
+{
     
-    // Game backend
     private GameBackend game;
     
-    // UI Components
     private JPanel mainPanel;
     private CardLayout cardLayout;
     
-    // Character selection
-    private int selectedChar1 = -1;
-    private int selectedChar2 = -1;
+    private int pickedChar1 = -1;
+    private int pickedChar2 = -1;
     private String[] charNames = {"Knight", "Robot", "Witch"};
-    private String[] charDescs = {
+    private String[] charInfo = 
+    {
         "HP:250 Speed:2 Atk:30 Ult:Counter",
         "HP:300 Speed:1 Atk:35 Ult:Rocket", 
         "HP:200 Speed:3 Atk:20 Ult:Revive"
     };
     
-    // Item selection
-    private int selectedItem1 = -1;
-    private int selectedItem2 = -1;
+    private int pickedItem1 = -1;
+    private int pickedItem2 = -1;
     private String[] itemNames = {"Shield", "Potion", "Knife", "Boots", "Blow Dart"};
-    private String[] itemDescs = {
+    private String[] itemInfo = 
+    {
         "Blocks all damage once",
         "Heals 40 HP",
         "+50% damage for 2 turns",
@@ -34,39 +33,33 @@ public class GameFrontend extends JFrame {
         "Poison enemy (3 uses)"
     };
     
-    // Battle components
-    private JProgressBar[] playerHpBars;
-    private JProgressBar[] enemyHpBars;
-    private JLabel[] playerLabels;
-    private JLabel[] enemyLabels;
-    private JButton[] actionButtons;
+    private JProgressBar[] goodGuyHpBars;
+    private JProgressBar[] badGuyHpBars;
+    private JLabel[] goodGuyLabels;
+    private JLabel[] badGuyLabels;
+    private JButton[] buttonz;
     
-    // Status labels for selection screens
-    private JLabel charSelectStatus;
-    private JLabel itemSelectStatus;
-    private JLabel gameOverLabel;
+    private JLabel charPickStatus;
+    private JLabel itemPickStatus;
+    private JLabel endGameLabel;
     
-    public GameFrontend() {
+    public GameFrontend() 
+    {
         super("Combat Game - Without MSG Guaranteed");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(900, 700);
         setLocationRelativeTo(null);
-        
-        // Debug: Print working directory
-        DebugEngine.log("Working directory: " + System.getProperty("user.dir"));
-        DebugEngine.log("Looking for images in: " + System.getProperty("user.dir"));
         
         game = new GameBackend();
         
         cardLayout = new CardLayout();
         mainPanel = new JPanel(cardLayout);
         
-        // Create all screens
-        mainPanel.add(createStartScreen(), "START");
-        mainPanel.add(createCharSelectScreen(), "CHAR_SELECT");
-        mainPanel.add(createItemSelectScreen(), "ITEM_SELECT");
-        mainPanel.add(createBattleScreen(), "BATTLE");
-        mainPanel.add(createGameOverScreen(), "GAMEOVER");
+        mainPanel.add(makeStartScreen(), "START");
+        mainPanel.add(makeCharPickScreen(), "CHAR_SELECT");
+        mainPanel.add(makeItemPickScreen(), "ITEM_SELECT");
+        mainPanel.add(makeBattleScreen(), "BATTLE");
+        mainPanel.add(makeEndScreen(), "GAMEOVER");
         
         add(mainPanel);
         cardLayout.show(mainPanel, "START");
@@ -74,8 +67,8 @@ public class GameFrontend extends JFrame {
         setVisible(true);
     }
     
-    // ========== START SCREEN ==========
-    private JPanel createStartScreen() {
+    private JPanel makeStartScreen() 
+    {
         JPanel panel = new JPanel(new GridBagLayout());
         panel.setBackground(Color.BLACK);
         
@@ -98,9 +91,10 @@ public class GameFrontend extends JFrame {
         JButton playButton = new JButton("PLAY");
         playButton.setFont(new Font("Arial", Font.BOLD, 30));
         playButton.setPreferredSize(new Dimension(200, 60));
-        playButton.addActionListener(e -> {
-            selectedChar1 = -1;
-            selectedChar2 = -1;
+        playButton.addActionListener(e -> 
+        {
+            pickedChar1 = -1;
+            pickedChar2 = -1;
             cardLayout.show(mainPanel, "CHAR_SELECT");
         });
         c.gridy = 2;
@@ -109,8 +103,8 @@ public class GameFrontend extends JFrame {
         return panel;
     }
     
-    // ========== CHARACTER SELECT SCREEN ==========
-    private JPanel createCharSelectScreen() {
+    private JPanel makeCharPickScreen() 
+    {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(new Color(30, 30, 30));
         
@@ -124,7 +118,8 @@ public class GameFrontend extends JFrame {
         charPanel.setBackground(new Color(30, 30, 30));
         charPanel.setBorder(BorderFactory.createEmptyBorder(10, 50, 10, 50));
         
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 3; i++) 
+        {
             final int charIndex = i;
             JPanel row = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 10));
             row.setBackground(new Color(50, 50, 50));
@@ -132,9 +127,9 @@ public class GameFrontend extends JFrame {
             JButton btn = new JButton(charNames[i]);
             btn.setFont(new Font("Arial", Font.BOLD, 18));
             btn.setPreferredSize(new Dimension(120, 50));
-            btn.addActionListener(e -> selectCharacter(charIndex));
+            btn.addActionListener(e -> pickChar(charIndex));
             
-            JLabel desc = new JLabel(charDescs[i]);
+            JLabel desc = new JLabel(charInfo[i]);
             desc.setFont(new Font("Arial", Font.PLAIN, 14));
             desc.setForeground(Color.LIGHT_GRAY);
             
@@ -145,34 +140,34 @@ public class GameFrontend extends JFrame {
         
         panel.add(charPanel, BorderLayout.CENTER);
         
-        charSelectStatus = new JLabel("Select Character 1", SwingConstants.CENTER);
-        charSelectStatus.setFont(new Font("Arial", Font.BOLD, 16));
-        charSelectStatus.setForeground(Color.YELLOW);
-        charSelectStatus.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 0));
-        panel.add(charSelectStatus, BorderLayout.SOUTH);
+        charPickStatus = new JLabel("Select Character 1", SwingConstants.CENTER);
+        charPickStatus.setFont(new Font("Arial", Font.BOLD, 16));
+        charPickStatus.setForeground(Color.YELLOW);
+        charPickStatus.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 0));
+        panel.add(charPickStatus, BorderLayout.SOUTH);
         
         return panel;
     }
     
-    private void selectCharacter(int index) {
-        if (selectedChar1 == -1) {
-            selectedChar1 = index;
-            DebugEngine.log("Selected Char 1: " + charNames[index]);
+    private void pickChar(int index) 
+    {
+        if (pickedChar1 == -1) 
+        {
+            pickedChar1 = index;
             
-            // Update status label
-            charSelectStatus.setText("Select Character 2 (different from " + charNames[index] + ")");
-        } else if (selectedChar2 == -1 && index != selectedChar1) {
-            selectedChar2 = index;
-            DebugEngine.log("Selected Char 2: " + charNames[index]);
+            charPickStatus.setText("Select Character 2 (different from " + charNames[index] + ")");
+        } 
+        else if (pickedChar2 == -1 && index != pickedChar1) 
+        {
+            pickedChar2 = index;
             
-            // Create teams and move to item selection
-            game.createTeams(selectedChar1, selectedChar2);
+            game.createTeams(pickedChar1, pickedChar2);
             cardLayout.show(mainPanel, "ITEM_SELECT");
         }
     }
     
-    // ========== ITEM SELECT SCREEN ==========
-    private JPanel createItemSelectScreen() {
+    private JPanel makeItemPickScreen() 
+    {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(new Color(30, 30, 30));
         
@@ -186,7 +181,8 @@ public class GameFrontend extends JFrame {
         itemPanel.setBackground(new Color(30, 30, 30));
         itemPanel.setBorder(BorderFactory.createEmptyBorder(10, 50, 10, 50));
         
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 5; i++) 
+        {
             final int itemIndex = i;
             JPanel row = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 10));
             row.setBackground(new Color(50, 50, 50));
@@ -194,9 +190,9 @@ public class GameFrontend extends JFrame {
             JButton btn = new JButton(itemNames[i]);
             btn.setFont(new Font("Arial", Font.BOLD, 16));
             btn.setPreferredSize(new Dimension(120, 40));
-            btn.addActionListener(e -> selectItem(itemIndex));
+            btn.addActionListener(e -> pickItem(itemIndex));
             
-            JLabel desc = new JLabel(itemDescs[i]);
+            JLabel desc = new JLabel(itemInfo[i]);
             desc.setFont(new Font("Arial", Font.PLAIN, 14));
             desc.setForeground(Color.LIGHT_GRAY);
             
@@ -207,100 +203,104 @@ public class GameFrontend extends JFrame {
         
         panel.add(itemPanel, BorderLayout.CENTER);
         
-        itemSelectStatus = new JLabel("Select Item for Character 1", SwingConstants.CENTER);
-        itemSelectStatus.setFont(new Font("Arial", Font.BOLD, 16));
-        itemSelectStatus.setForeground(Color.CYAN);
-        itemSelectStatus.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 0));
-        panel.add(itemSelectStatus, BorderLayout.SOUTH);
+        itemPickStatus = new JLabel("Select Item for Character 1", SwingConstants.CENTER);
+        itemPickStatus.setFont(new Font("Arial", Font.BOLD, 16));
+        itemPickStatus.setForeground(Color.CYAN);
+        itemPickStatus.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 0));
+        panel.add(itemPickStatus, BorderLayout.SOUTH);
         
         return panel;
     }
     
-    private void selectItem(int index) {
-        if (selectedItem1 == -1) {
-            selectedItem1 = index;
+    private void pickItem(int index) 
+    {
+        if (pickedItem1 == -1) 
+        {
+            pickedItem1 = index;
             game.equipItem(0, index);
-            DebugEngine.log("Equipped Item 1: " + itemNames[index]);
             
-            // Update status
-            itemSelectStatus.setText("Select Item for Character 2");
-        } else if (selectedItem2 == -1 && index != selectedItem1) {
-            selectedItem2 = index;
+            itemPickStatus.setText("Select Item for Character 2");
+        } 
+        else if (pickedItem2 == -1 && index != pickedItem1) 
+        {
+            pickedItem2 = index;
             game.equipItem(1, index);
-            DebugEngine.log("Equipped Item 2: " + itemNames[index]);
             
-            // Start battle
-            startBattle();
+            beginBattle();
         }
     }
     
-    // ========== BATTLE SCREEN ==========
-    private JPanel createBattleScreen() {
+    private JPanel makeBattleScreen() 
+    {
         JPanel panel = new JPanel(new BorderLayout());
         
-        // Background - try to load, use nice green if not found
         boolean bgLoaded = false;
-        try {
+        try 
+        {
             ImageIcon bgIcon = new ImageIcon("background.png");
-            if (bgIcon.getIconWidth() > 0) {
+            if (bgIcon.getIconWidth() > 0) 
+            {
                 final Image bg = bgIcon.getImage();
-                DebugEngine.log("Background image loaded successfully!");
-                panel = new JPanel(new BorderLayout()) {
+                panel = new JPanel(new BorderLayout()) 
+                {
                     @Override
-                    protected void paintComponent(Graphics g) {
+                    protected void paintComponent(Graphics g) 
+                    {
                         super.paintComponent(g);
                         g.drawImage(bg, 0, 0, getWidth(), getHeight(), this);
                     }
                 };
                 bgLoaded = true;
             }
-        } catch (Exception e) {
-            DebugEngine.error("Failed to load background: " + e.getMessage());
+        } 
+        catch (Exception e) 
+        {
         }
         
-        if (!bgLoaded) {
-            DebugEngine.warn("Background image not found! Using forest green fallback.");
-            panel.setBackground(new Color(34, 139, 34)); // Forest green
+        if (!bgLoaded) 
+        {
+            panel.setBackground(new Color(34, 139, 34));
         }
         
-        // Character sprites on battlefield
         JPanel characterPanel = new JPanel(new BorderLayout());
         characterPanel.setOpaque(false);
         
-        // Player character on the LEFT
         JPanel leftPanel = new JPanel();
         leftPanel.setOpaque(false);
         leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
         JLabel playerChar = new JLabel();
-        try {
+        try 
+        {
             ImageIcon icon = new ImageIcon("character_1.png");
-            if (icon.getIconWidth() > 0) {
+            if (icon.getIconWidth() > 0) 
+            {
                 Image img = icon.getImage().getScaledInstance(150, 150, Image.SCALE_SMOOTH);
                 playerChar.setIcon(new ImageIcon(img));
-                DebugEngine.log("Player character sprite loaded!");
             }
-        } catch (Exception ex) {
-            DebugEngine.error("Failed to load player character: " + ex.getMessage());
+        } 
+        catch (Exception ex) 
+        {
         }
         leftPanel.add(Box.createVerticalGlue());
         leftPanel.add(playerChar);
         leftPanel.add(Box.createVerticalGlue());
         leftPanel.setBorder(BorderFactory.createEmptyBorder(0, 50, 100, 0));
         
-        // Enemy character on the RIGHT
         JPanel rightPanel = new JPanel();
         rightPanel.setOpaque(false);
         rightPanel.setLayout(new BoxLayout(rightPanel, BoxLayout.Y_AXIS));
         JLabel enemyChar = new JLabel();
-        try {
+        try 
+        {
             ImageIcon icon = new ImageIcon("character_2.png");
-            if (icon.getIconWidth() > 0) {
+            if (icon.getIconWidth() > 0) 
+            {
                 Image img = icon.getImage().getScaledInstance(150, 150, Image.SCALE_SMOOTH);
                 enemyChar.setIcon(new ImageIcon(img));
-                DebugEngine.log("Enemy character sprite loaded!");
             }
-        } catch (Exception ex) {
-            DebugEngine.error("Failed to load enemy character: " + ex.getMessage());
+        } 
+        catch (Exception ex) 
+        {
         }
         rightPanel.add(Box.createVerticalGlue());
         rightPanel.add(enemyChar);
@@ -312,36 +312,35 @@ public class GameFrontend extends JFrame {
         
         panel.add(characterPanel, BorderLayout.CENTER);
         
-        // HP Panel
         JPanel hpPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 10));
         hpPanel.setOpaque(false);
         
-        playerHpBars = new JProgressBar[2];
-        enemyHpBars = new JProgressBar[2];
-        playerLabels = new JLabel[2];
-        enemyLabels = new JLabel[2];
+        goodGuyHpBars = new JProgressBar[2];
+        badGuyHpBars = new JProgressBar[2];
+        goodGuyLabels = new JLabel[2];
+        badGuyLabels = new JLabel[2];
         
-        // Character images
         JLabel charImg1 = new JLabel();
         JLabel charImg2 = new JLabel();
-        try {
+        try 
+        {
             ImageIcon icon1 = new ImageIcon("character_1.png");
             ImageIcon icon2 = new ImageIcon("character_2.png");
-            if (icon1.getIconWidth() > 0) {
+            if (icon1.getIconWidth() > 0) 
+            {
                 Image i1 = icon1.getImage().getScaledInstance(56, 56, Image.SCALE_SMOOTH);
                 charImg1.setIcon(new ImageIcon(i1));
-                DebugEngine.log("Character 1 image loaded!");
             }
-            if (icon2.getIconWidth() > 0) {
+            if (icon2.getIconWidth() > 0) 
+            {
                 Image i2 = icon2.getImage().getScaledInstance(56, 56, Image.SCALE_SMOOTH);
                 charImg2.setIcon(new ImageIcon(i2));
-                DebugEngine.log("Character 2 image loaded!");
             }
-        } catch (Exception ex) {
-            DebugEngine.error("Failed to load character images: " + ex.getMessage());
+        } 
+        catch (Exception ex) 
+        {
         }
         
-        // Add character 1 image
         hpPanel.add(charImg1);
         
         JLabel yourTeam = new JLabel("YOUR TEAM:");
@@ -349,12 +348,13 @@ public class GameFrontend extends JFrame {
         yourTeam.setFont(new Font("Arial", Font.BOLD, 14));
         hpPanel.add(yourTeam);
         
-        for (int i = 0; i < 2; i++) {
-            playerHpBars[i] = createHpBar();
-            playerLabels[i] = new JLabel();
-            playerLabels[i].setForeground(Color.WHITE);
-            hpPanel.add(playerLabels[i]);
-            hpPanel.add(playerHpBars[i]);
+        for (int i = 0; i < 2; i++) 
+        {
+            goodGuyHpBars[i] = makeHpBar();
+            goodGuyLabels[i] = new JLabel();
+            goodGuyLabels[i].setForeground(Color.WHITE);
+            hpPanel.add(goodGuyLabels[i]);
+            hpPanel.add(goodGuyHpBars[i]);
         }
         
         JLabel enemyTeam = new JLabel("ENEMIES:");
@@ -362,31 +362,31 @@ public class GameFrontend extends JFrame {
         enemyTeam.setFont(new Font("Arial", Font.BOLD, 14));
         hpPanel.add(enemyTeam);
         
-        for (int i = 0; i < 2; i++) {
-            enemyHpBars[i] = createHpBar();
-            enemyLabels[i] = new JLabel();
-            enemyLabels[i].setForeground(Color.WHITE);
-            hpPanel.add(enemyLabels[i]);
-            hpPanel.add(enemyHpBars[i]);
+        for (int i = 0; i < 2; i++) 
+        {
+            badGuyHpBars[i] = makeHpBar();
+            badGuyLabels[i] = new JLabel();
+            badGuyLabels[i].setForeground(Color.WHITE);
+            hpPanel.add(badGuyLabels[i]);
+            hpPanel.add(badGuyHpBars[i]);
         }
         
-        // Add character 2 image at the end
         hpPanel.add(charImg2);
         
-        // Action buttons
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
         buttonPanel.setOpaque(false);
         
-        actionButtons = new JButton[8];
+        buttonz = new JButton[8];
         String[] btnLabels = {"Attack Enemy 1", "Attack Enemy 2", "Use Ultimate", 
                               "Use Item", "Wait", "Help"};
         
-        for (int i = 0; i < 6; i++) {
+        for (int i = 0; i < 6; i++) 
+        {
             final int index = i;
-            actionButtons[i] = new JButton(btnLabels[i]);
-            actionButtons[i].setFont(new Font("Arial", Font.BOLD, 12));
-            actionButtons[i].addActionListener(e -> handleAction(index));
-            buttonPanel.add(actionButtons[i]);
+            buttonz[i] = new JButton(btnLabels[i]);
+            buttonz[i].setFont(new Font("Arial", Font.BOLD, 12));
+            buttonz[i].addActionListener(e -> doAction(index));
+            buttonPanel.add(buttonz[i]);
         }
         
         JPanel bottomPanel = new JPanel(new BorderLayout());
@@ -399,7 +399,8 @@ public class GameFrontend extends JFrame {
         return panel;
     }
     
-    private JProgressBar createHpBar() {
+    private JProgressBar makeHpBar() 
+    {
         JProgressBar bar = new JProgressBar(0, 100);
         bar.setValue(100);
         bar.setStringPainted(true);
@@ -408,89 +409,93 @@ public class GameFrontend extends JFrame {
         return bar;
     }
     
-    private void startBattle() {
-        updateBattleDisplay();
-        DebugEngine.log("Battle started!");
+    private void beginBattle() 
+    {
+        refreshDisplay();
         cardLayout.show(mainPanel, "BATTLE");
     }
     
-    private void handleAction(int action) {
-        DebugEngine.log("Action: " + action);
+    private void doAction(int action) 
+    {
+        int playerIdx = 0;
         
-        // Determine which player is acting (simplify: always player 0 for now)
-        int playerIndex = 0;
-        
-        // Find alive player
-        if (!game.getPlayerTeam()[0].isAlive && game.getPlayerTeam()[1].isAlive) {
-            playerIndex = 1;
+        if (!game.getPlayerTeam()[0].isAlive && game.getPlayerTeam()[1].isAlive) 
+        {
+            playerIdx = 1;
         }
         
-        switch (action) {
-            case 0: // Attack enemy 1
-                game.playerAttack(playerIndex, 0);
+        switch (action) 
+        {
+            case 0:
+                game.playerAttack(playerIdx, 0);
                 break;
-            case 1: // Attack enemy 2
-                game.playerAttack(playerIndex, 1);
+            case 1:
+                game.playerAttack(playerIdx, 1);
                 break;
-            case 2: // Ultimate
-                game.playerUltimate(playerIndex);
+            case 2:
+                game.playerUltimate(playerIdx);
                 break;
-            case 3: // Item
-                game.playerUseItem(playerIndex);
+            case 3:
+                game.playerUseItem(playerIdx);
                 break;
-            case 4: // Wait
-                DebugEngine.log("Player waits...");
+            case 4:
                 break;
-            case 5: // Help
-                showHelp();
+            case 5:
+                showHelpInfo();
                 return;
         }
         
-        updateBattleDisplay();
+        refreshDisplay();
         
-        // Log to console instead
-        DebugEngine.log(game.getBattleLog());
-        
-        if (game.isGameOver()) {
-            showGameOver();
+        if (game.isGameOver()) 
+        {
+            triggerEndScreen();
         }
     }
     
-    private void updateBattleDisplay() {
+    private void refreshDisplay() 
+    {
         GameBackend.Character[] players = game.getPlayerTeam();
         GameBackend.Character[] enemies = game.getEnemyTeam();
         
-        for (int i = 0; i < 2; i++) {
-            updateHpBar(playerHpBars[i], players[i]);
-            playerLabels[i].setText(players[i].name.substring(4)); // Remove "O's "
+        for (int i = 0; i < 2; i++) 
+        {
+            updateBarThing(goodGuyHpBars[i], players[i]);
+            goodGuyLabels[i].setText(players[i].name.substring(4));
             
-            updateHpBar(enemyHpBars[i], enemies[i]);
-            enemyLabels[i].setText(enemies[i].name.substring(4)); // Remove "X's "
+            updateBarThing(badGuyHpBars[i], enemies[i]);
+            badGuyLabels[i].setText(enemies[i].name.substring(4));
         }
-        
-        DebugEngine.printGameState(game);
     }
     
-    private void updateHpBar(JProgressBar bar, GameBackend.Character c) {
+    private void updateBarThing(JProgressBar bar, GameBackend.Character c) 
+    {
         bar.setMaximum(c.maxHp);
         bar.setValue(c.currentHp);
         bar.setString(c.currentHp + " / " + c.maxHp + " HP");
         
-        if (c.currentHp > c.maxHp * 0.5) {
+        if (c.currentHp > c.maxHp * 0.5) 
+        {
             bar.setForeground(Color.GREEN);
-        } else if (c.currentHp > c.maxHp * 0.25) {
+        } 
+        else if (c.currentHp > c.maxHp * 0.25) 
+        {
             bar.setForeground(Color.YELLOW);
-        } else {
+        } 
+        else 
+        {
             bar.setForeground(Color.RED);
         }
         
-        if (!c.isAlive) {
+        if (!c.isAlive) 
+        {
             bar.setForeground(Color.DARK_GRAY);
             bar.setString("DEFEATED");
         }
     }
     
-    private void showHelp() {
+    private void showHelpInfo() 
+    {
         String help = "=== HELP ===\n" +
                      "Knight: Counter reflects 2.5x damage\n" +
                      "Robot: Rocket hits all enemies for 50\n" +
@@ -500,8 +505,8 @@ public class GameFrontend extends JFrame {
         JOptionPane.showMessageDialog(this, help, "Help", JOptionPane.INFORMATION_MESSAGE);
     }
     
-    // ========== GAME OVER SCREEN ==========
-    private JPanel createGameOverScreen() {
+    private JPanel makeEndScreen() 
+    {
         JPanel panel = new JPanel(new GridBagLayout());
         panel.setBackground(Color.BLACK);
         
@@ -509,21 +514,22 @@ public class GameFrontend extends JFrame {
         c.gridx = 0;
         c.insets = new Insets(20, 20, 20, 20);
         
-        gameOverLabel = new JLabel("GAME OVER");
-        gameOverLabel.setFont(new Font("Arial", Font.BOLD, 48));
-        gameOverLabel.setForeground(Color.RED);
+        endGameLabel = new JLabel("GAME OVER");
+        endGameLabel.setFont(new Font("Arial", Font.BOLD, 48));
+        endGameLabel.setForeground(Color.RED);
         c.gridy = 0;
-        panel.add(gameOverLabel, c);
+        panel.add(endGameLabel, c);
         
         JButton playAgain = new JButton("Play Again");
         playAgain.setFont(new Font("Arial", Font.BOLD, 24));
         playAgain.setPreferredSize(new Dimension(200, 50));
-        playAgain.addActionListener(e -> {
+        playAgain.addActionListener(e -> 
+        {
             game = new GameBackend();
-            selectedChar1 = -1;
-            selectedChar2 = -1;
-            selectedItem1 = -1;
-            selectedItem2 = -1;
+            pickedChar1 = -1;
+            pickedChar2 = -1;
+            pickedItem1 = -1;
+            pickedItem2 = -1;
             cardLayout.show(mainPanel, "START");
         });
         c.gridy = 1;
@@ -539,20 +545,24 @@ public class GameFrontend extends JFrame {
         return panel;
     }
     
-    private void showGameOver() {
-        // Update game over label
-        if (game.didPlayerWin()) {
-            gameOverLabel.setText("VICTORY!");
-            gameOverLabel.setForeground(Color.GREEN);
-        } else {
-            gameOverLabel.setText("DEFEAT");
-            gameOverLabel.setForeground(Color.RED);
+    private void triggerEndScreen() 
+    {
+        if (game.didPlayerWin()) 
+        {
+            endGameLabel.setText("VICTORY!");
+            endGameLabel.setForeground(Color.GREEN);
+        } 
+        else 
+        {
+            endGameLabel.setText("DEFEAT");
+            endGameLabel.setForeground(Color.RED);
         }
         
         cardLayout.show(mainPanel, "GAMEOVER");
     }
     
-    public static void main(String[] args) {
+    public static void main(String[] args) 
+    {
         SwingUtilities.invokeLater(() -> new GameFrontend());
     }
 }
