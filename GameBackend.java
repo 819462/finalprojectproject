@@ -153,14 +153,18 @@ public class GameBackend
         
         if (!user.isAlive || user.ultCharge < user.ultMax) 
         {
+            
             battleLog = "Cannot use ultimate!";
             return;
+            
         }
         
         useUltimate(user, playerTeam, enemyTeam);
+        
         user.ultCharge = 0;
         
         enemyTurn();
+        
         endTurn();
     }
     
@@ -235,7 +239,7 @@ public class GameBackend
         } 
         else if (user.name.contains("Witch")) 
         {
-            boolean revived = false;
+            boolean isAlive = false;
             int i = 0;
             while (i < allies.length)
             {
@@ -243,14 +247,14 @@ public class GameBackend
                 {
                     allies[i].currentHp = 50;
                     allies[i].isAlive = true;
-                    battleLog = battleLog + allies[i].name + " revived with 50 HP!\n";
-                    revived = true;
+                    battleLog = battleLog + allies[i].name + " isAlive with 50 HP!\n";
+                    isAlive = true;
                     break;
                 }
                 i = i + 1;
             }
             
-            if (!revived) 
+            if (!isAlive) 
             {
                 int j = 0;
                 while (j < allies.length)
