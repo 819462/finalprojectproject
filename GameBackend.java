@@ -143,7 +143,7 @@ public class GameBackend
         
         performAttack(attacker, target);
         enemyTurn();
-        endTurn();
+        ();
     }
     
     public void playerUltimate(int playerIndex) 
@@ -346,6 +346,7 @@ public class GameBackend
         }
     }
     
+
     private void endTurn() 
     {
         int i = 0;
@@ -360,83 +361,90 @@ public class GameBackend
             }
             i = i + 1;
         }
-        
-        int j = 0;
-        while (j < enemyTeam.length)
+    
+        i = 0;
+        while (i < enemyTeam.length)
         {
-            if (enemyTeam[j].poisonTurns > 0) 
+            if (enemyTeam[i].poisonTurns > 0) 
             {
-                enemyTeam[j].currentHp = enemyTeam[j].currentHp - 10;
-                battleLog = battleLog + enemyTeam[j].name + " takes 10 poison damage!\n";
-                enemyTeam[j].poisonTurns = enemyTeam[j].poisonTurns - 1;
-                checkDeath(enemyTeam[j]);
+                enemyTeam[i].currentHp = enemyTeam[i].currentHp - 10;
+                battleLog = battleLog + enemyTeam[i].name + " takes 10 poison damage!\n";
+                enemyTeam[i].poisonTurns = enemyTeam[i].poisonTurns - 1;
+                checkDeath(enemyTeam[i]);
             }
-            j = j + 1;
+            i++;
         }
-        
-        int k = 0;
-        while (k < playerTeam.length)
+
+        i = 0;
+        while (i < playerTeam.length)
         {
-            if (playerTeam[k].knifeBoostTurns > 0) 
+            if (playerTeam[i].knifeBoostTurns > 0) 
             {
-                playerTeam[k].knifeBoostTurns = playerTeam[k].knifeBoostTurns - 1;
+                playerTeam[i].knifeBoostTurns = playerTeam[i].knifeBoostTurns - 1;
             }
-            k = k + 1;
+            i++;
         }
-        
-        int m = 0;
-        while (m < enemyTeam.length)
+
+        i = 0;
+        while (i < enemyTeam.length)
         {
-            if (enemyTeam[m].knifeBoostTurns > 0) 
+            if (enemyTeam[i].knifeBoostTurns > 0) 
             {
-                enemyTeam[m].knifeBoostTurns = enemyTeam[m].knifeBoostTurns - 1;
-            }
-            m = m + 1;
+                enemyTeam[i].knifeBoostTurns = enemyTeam[i].knifeBoostTurns - 1;
+            }    
+            i++;
         }
-        
-        int n = 0;
-        while (n < playerTeam.length)
+
+        i = 0;
+        while (i < playerTeam.length)
         {
-            if (playerTeam[n].isAlive && playerTeam[n].ultCharge < playerTeam[n].ultMax) 
+            if (playerTeam[i].isAlive && playerTeam[i].ultCharge < playerTeam[i].ultMax) 
             {
-                playerTeam[n].ultCharge = playerTeam[n].ultCharge + 1;
+                playerTeam[i].ultCharge = playerTeam[i].ultCharge + 1;
             }
-            n = n + 1;
+            i++;
         }
-        
-        int p = 0;
-        while (p < enemyTeam.length)
+
+        i = 0;
+        while (i < enemyTeam.length)
         {
-            if (enemyTeam[p].isAlive && enemyTeam[p].ultCharge < enemyTeam[p].ultMax) 
+            
+            if (enemyTeam[i].isAlive && enemyTeam[i].ultCharge < enemyTeam[i].ultMax) 
             {
-                enemyTeam[p].ultCharge = enemyTeam[p].ultCharge + 1;
+                enemyTeam[i].ultCharge = enemyTeam[i].ultCharge + 1;
             }
-            p = p + 1;
+            i++;
         }
-        
+    
         checkGameOver();
     }
+
     
     private void checkDeath(Character c) 
     {
         if (c.currentHp <= 0) 
         {
+            
             c.currentHp = 0;
             c.isAlive = false;
             battleLog = battleLog + c.name + " has been defeated!\n";
+            
         }
     }
     
     private void checkGameOver() 
     {
+        
         boolean playerAlive = playerTeam[0].isAlive || playerTeam[1].isAlive;
         boolean enemyAlive = enemyTeam[0].isAlive || enemyTeam[1].isAlive;
         
         if (!playerAlive) 
         {
+            
             gameOver = true;
             playerWon = false;
             battleLog = battleLog + "\n*** GAME OVER - You Lost! ***\n";
+            
         } 
         else if (!enemyAlive) 
         {
