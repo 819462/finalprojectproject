@@ -455,8 +455,8 @@ public class GameFrontend extends JFrame
     
     private void refreshDisplay() 
     {
-        GameBackend.Character[] players = game.getPlayerTeam();
-        GameBackend.Character[] enemies = game.getEnemyTeam();
+        Character[] players = game.getPlayerTeam();
+        Character[] enemies = game.getEnemyTeam();
         
         for (int i = 0; i < 2; i++) 
         {
@@ -468,7 +468,7 @@ public class GameFrontend extends JFrame
         }
     }
     
-    private void updateBarThing(JProgressBar bar, GameBackend.Character c) 
+    private void updateBarThing(JProgressBar bar, Character c) 
     {
         bar.setMaximum(c.maxHp);
         bar.setValue(c.currentHp);
