@@ -37,7 +37,7 @@ public class GameFrontend extends JFrame
     private JProgressBar[] badGuyHpBars;
     private JLabel[] goodGuyLabels;
     private JLabel[] badGuyLabels;
-    private JButton[] buttonz;
+    private JButton[] button;
     
     private JLabel charPickStatus;
     private JLabel itemPickStatus;
@@ -376,17 +376,17 @@ public class GameFrontend extends JFrame
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
         buttonPanel.setOpaque(false);
         
-        buttonz = new JButton[8];
+        button = new JButton[8];
         String[] btnLabels = {"Attack Enemy 1", "Attack Enemy 2", "Use Ultimate", 
                               "Use Item", "Wait", "Help"};
         
         for (int i = 0; i < 6; i++) 
         {
             final int index = i;
-            buttonz[i] = new JButton(btnLabels[i]);
-            buttonz[i].setFont(new Font("Arial", Font.BOLD, 12));
-            buttonz[i].addActionListener(e -> doAction(index));
-            buttonPanel.add(buttonz[i]);
+            button[i] = new JButton(btnLabels[i]);
+            button[i].setFont(new Font("Arial", Font.BOLD, 12));
+            button[i].addActionListener(e -> doAction(index));
+            buttonPanel.add(button[i]);
         }
         
         JPanel bottomPanel = new JPanel(new BorderLayout());
