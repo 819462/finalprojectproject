@@ -7,10 +7,8 @@ public class GameFrontend extends JFrame
 {
     
     private GameBackend game;
-    
     private JPanel mainPanel;
     private CardLayout cardLayout;
-    
     private int pickedChar1 = -1;
     private int pickedChar2 = -1;
     private String[] charNames = {"Knight", "Robot", "Witch"};
@@ -38,7 +36,6 @@ public class GameFrontend extends JFrame
     private JLabel[] goodGuyLabels;
     private JLabel[] badGuyLabels;
     private JButton[] button;
-    
     private JLabel charPickStatus;
     private JLabel itemPickStatus;
     private JLabel endGameLabel;
@@ -69,6 +66,7 @@ public class GameFrontend extends JFrame
     
     private JPanel makeStartScreen() 
     {
+        
         JPanel panel = new JPanel(new GridBagLayout());
         panel.setBackground(Color.BLACK);
         
@@ -101,6 +99,7 @@ public class GameFrontend extends JFrame
         panel.add(playButton, c);
         
         return panel;
+        
     }
     
     private JPanel makeCharPickScreen() 
@@ -151,18 +150,23 @@ public class GameFrontend extends JFrame
     
     private void pickChar(int index) 
     {
+        
         if (pickedChar1 == -1) 
         {
+            
             pickedChar1 = index;
             
             charPickStatus.setText("Select Character 2 (different from " + charNames[index] + ")");
+            
         } 
         else if (pickedChar2 == -1 && index != pickedChar1) 
         {
+            
             pickedChar2 = index;
             
             game.createTeams(pickedChar1, pickedChar2);
             cardLayout.show(mainPanel, "ITEM_SELECT");
+            
         }
     }
     
@@ -255,6 +259,7 @@ public class GameFrontend extends JFrame
         } 
         catch (Exception e) 
         {
+            // I can put nothing in here???
         }
         
         if (!bgLoaded) 
