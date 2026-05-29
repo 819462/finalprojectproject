@@ -11,15 +11,16 @@ public class GameFrontend extends JFrame // still so confused about inheritance 
     private JPanel mainPanel;
     private CardLayout cardLayout;
     private int pickedChar1 = -1;
-    private int pickedChar2 = -1;
-    private String[] charNames = {"Knight", "Robot", "Witch"};
-    private String[] charInfo = 
+    private int pickedChar2 = -1; // -1 just means that it hasn't been picked yet
+    private String[] charNames = {"Knight", "Robot", "Witch"}; // just info for the selection screen
+    private String[] charInfo =  // same as the one above... just info for the selection screen.
     {
         "HP:250 Speed:2 Atk:30 Ult:Counter",
         "HP:300 Speed:1 Atk:35 Ult:Rocket", 
         "HP:200 Speed:3 Atk:20 Ult:Revive"
     };
-    
+
+    // SAME HERE AS THE ONE ABOVE
     private int pickedItem1 = -1;
     private int pickedItem2 = -1;
     private String[] itemNames = {"Shield", "Potion", "Knife", "Boots", "Blow Dart"};
@@ -31,7 +32,8 @@ public class GameFrontend extends JFrame // still so confused about inheritance 
         "+2 Speed permanently",
         "Poison enemy (3 uses)"
     };
-    
+
+    // declared at classs level because a LOT of methods need them
     private JProgressBar[] goodGuyHpBars;
     private JProgressBar[] badGuyHpBars;
     private JLabel[] goodGuyLabels;
@@ -43,12 +45,13 @@ public class GameFrontend extends JFrame // still so confused about inheritance 
     
     public GameFrontend() 
     {
-        super("Combat Game - Without MSG Guaranteed");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        super("Combat Game"); // without MSG guaranteed was MESSAGES not whatever that chemical is
+        // super just calls... idek what it does. I forgot. I got it from stack overflow.
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // X-BUTTON!!!!! I actually figured this out myself while learning Swing?? heh.
         setSize(900, 700);
-        setLocationRelativeTo(null);
+        setLocationRelativeTo(null); // centers the screen. I think I just copied it from wherever I was learning swing fom
         
-        game = new GameBackend();
+        game = new GameBackend(); // BACKEND!!!!
         
         cardLayout = new CardLayout();
         mainPanel = new JPanel(cardLayout);
