@@ -3,10 +3,11 @@ import java.awt.*;
 import java.awt.event.*;
 
 
-public class GameFrontend extends JFrame 
+public class GameFrontend extends JFrame // still so confused about inheritance but claude said I needed this when learning Swing so I used it
+    // I THINK it's to inherit everything a window needs, like the buttons...? I still am very confused.
 {
     
-    private GameBackend game;
+    private GameBackend game; // our backend!
     private JPanel mainPanel;
     private CardLayout cardLayout;
     private int pickedChar1 = -1;
